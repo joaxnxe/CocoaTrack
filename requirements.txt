@@ -2,7 +2,6 @@ streamlit
 numpy
 pandas
 Pillow
-opencv-python
+opencv-python-headless
 edge-impulse-linux
 six
-pyaudio
