@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+env/
+cocoatrack_env/
+app_before_*.py
+*_before_*.py
+*.log
