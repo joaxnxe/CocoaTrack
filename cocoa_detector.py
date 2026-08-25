@@ -6,11 +6,17 @@ import numpy as np
 from edge_impulse_linux.image import ImageImpulseRunner
 
 
-MODEL_PATH = (
-    Path(__file__).resolve().parent
-    / "models"
-    / "cocoa_detector.eim"
-)
+import platform
+
+_MODEL_DIR = Path(__file__).resolve().parent / "models"
+
+_system = platform.system().lower()
+_machine = platform.machine().lower()
+
+if _system == "linux" and _machine in {"x86_64", "amd64"}:
+    MODEL_PATH = _MODEL_DIR / "cocoa_detector_linux.eim"
+else:
+    MODEL_PATH = _MODEL_DIR / "cocoa_detector.eim"
 
 MODEL_SIZE = 320
 
