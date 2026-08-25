@@ -5,3 +5,4 @@ Pillow
 opencv-python-headless
 edge-impulse-linux
 six
+pyaudio
