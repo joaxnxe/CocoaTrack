@@ -393,9 +393,13 @@ def detect_pods_with_edge_impulse(
 
     all_boxes = []
 
+    print("COCOATRACK_DIAG: DETECTOR START", flush=True)
+    print(f"COCOATRACK_DIAG: MODEL PATH = {MODEL_PATH}", flush=True)
+
     with ImageImpulseRunner(
         str(MODEL_PATH)
     ) as runner:
+        print("COCOATRACK_DIAG: MODEL RUNNER OPENED", flush=True)
 
         runner.init()
 
