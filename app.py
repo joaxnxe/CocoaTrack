@@ -5816,6 +5816,15 @@ else:
 # Cache ML detection for the exact image/crop so ordinary
 # Streamlit reruns do not repeatedly relaunch Edge Impulse.
 import hashlib
+import threading
+
+
+@st.cache_resource
+def _get_cocoatrack_detection_lock():
+    return threading.Lock()
+
+
+_detection_lock = _get_cocoatrack_detection_lock()
 
 _analysis_array = np.ascontiguousarray(analysis_rgb)
 _analysis_key = hashlib.sha256(
@@ -5832,16 +5841,168 @@ if (
         flush=True,
     )
 
-    st.session_state["_cocoatrack_stage4"] = (
-        detect_pods_with_edge_impulse(
-            prepared_rgb=analysis_rgb,
-            combined_mask=None,
+    if not _detection_lock.acquire(blocking=False):
+        print(
+            "COCOATRACK_DIAG: DETECTOR BUSY - NEW RUN BLOCKED",
+            flush=True,
         )
-    )
 
-    st.session_state["_cocoatrack_detection_key"] = (
-        _analysis_key
-    )
+        st.markdown(
+            """
+            <style>
+            @keyframes cocoaPulse {
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.35);
+                    opacity: 0.55;
+                }
+            }
+
+            @keyframes cocoaLoad {
+                0% {
+                    transform: translateX(-120%);
+                }
+                100% {
+                    transform: translateX(320%);
+                }
+            }
+
+            .cocoa-busy-card {
+                padding: 1.45rem 1.55rem;
+                margin: 1rem 0;
+                border-radius: 22px;
+                border: 1px solid rgba(232, 183, 83, 0.28);
+                background:
+                    radial-gradient(
+                        circle at 90% 0%,
+                        rgba(232, 183, 83, 0.18),
+                        transparent 38%
+                    ),
+                    linear-gradient(
+                        145deg,
+                        #211c17,
+                        #151311
+                    );
+                box-shadow:
+                    0 18px 45px rgba(0, 0, 0, 0.25),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            }
+
+            .cocoa-busy-header {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .cocoa-busy-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #efbc58;
+                box-shadow:
+                    0 0 0 6px rgba(239, 188, 88, 0.10),
+                    0 0 18px rgba(239, 188, 88, 0.75);
+                animation: cocoaPulse 1.25s ease-in-out infinite;
+            }
+
+            .cocoa-busy-title {
+                color: #fff8ea;
+                font-size: 1.12rem;
+                font-weight: 750;
+            }
+
+            .cocoa-busy-message {
+                margin-top: 0.65rem;
+                margin-left: 1.8rem;
+                color: rgba(255, 248, 234, 0.72);
+                line-height: 1.55;
+                font-size: 0.93rem;
+            }
+
+            .cocoa-busy-track {
+                position: relative;
+                height: 4px;
+                margin-top: 1rem;
+                overflow: hidden;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .cocoa-busy-bar {
+                position: absolute;
+                width: 38%;
+                height: 100%;
+                border-radius: 999px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    #efbc58,
+                    #ffe2a2,
+                    transparent
+                );
+                animation: cocoaLoad 1.5s ease-in-out infinite;
+            }
+
+            .cocoa-busy-status {
+                display: inline-block;
+                margin-top: 0.9rem;
+                margin-left: 1.8rem;
+                padding: 0.3rem 0.7rem;
+                border-radius: 999px;
+                background: rgba(239, 188, 88, 0.09);
+                border: 1px solid rgba(239, 188, 88, 0.20);
+                color: #f3ca78;
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.07em;
+            }
+            </style>
+
+            <div class="cocoa-busy-card">
+                <div class="cocoa-busy-header">
+                    <div class="cocoa-busy-dot"></div>
+                    <div class="cocoa-busy-title">
+                        Detection in progress
+                    </div>
+                </div>
+
+                <div class="cocoa-busy-message">
+                    Execution is happening.
+                    Please wait for the current detection to finish
+                    before running another one.
+                </div>
+
+                <div class="cocoa-busy-track">
+                    <div class="cocoa-busy-bar"></div>
+                </div>
+
+                <div class="cocoa-busy-status">
+                    COCOATRACK · PROCESSING
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.stop()
+
+    try:
+        st.session_state["_cocoatrack_stage4"] = (
+            detect_pods_with_edge_impulse(
+                prepared_rgb=analysis_rgb,
+                combined_mask=None,
+            )
+        )
+
+        st.session_state["_cocoatrack_detection_key"] = (
+            _analysis_key
+        )
+
+    finally:
+        _detection_lock.release()
 else:
     print(
         "COCOATRACK_DIAG: SAME IMAGE/CROP - USING CACHED RESULT",
