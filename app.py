@@ -5756,10 +5756,42 @@ if journey_step == 1:
         )
 
 
-stage4 = detect_pods_with_edge_impulse(
-    prepared_rgb=analysis_rgb,
-    combined_mask=None,
-)
+# Cache ML detection for the exact image/crop so ordinary
+# Streamlit reruns do not repeatedly relaunch Edge Impulse.
+import hashlib
+
+_analysis_array = np.ascontiguousarray(analysis_rgb)
+_analysis_key = hashlib.sha256(
+    _analysis_array.tobytes()
+).hexdigest()
+
+if (
+    st.session_state.get("_cocoatrack_detection_key")
+    != _analysis_key
+    or "_cocoatrack_stage4" not in st.session_state
+):
+    print(
+        "COCOATRACK_DIAG: NEW IMAGE/CROP - RUNNING DETECTOR",
+        flush=True,
+    )
+
+    st.session_state["_cocoatrack_stage4"] = (
+        detect_pods_with_edge_impulse(
+            prepared_rgb=analysis_rgb,
+            combined_mask=None,
+        )
+    )
+
+    st.session_state["_cocoatrack_detection_key"] = (
+        _analysis_key
+    )
+else:
+    print(
+        "COCOATRACK_DIAG: SAME IMAGE/CROP - USING CACHED RESULT",
+        flush=True,
+    )
+
+stage4 = st.session_state["_cocoatrack_stage4"]
 
 if journey_step == 1:
     stage_heading(
