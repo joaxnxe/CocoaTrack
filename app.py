@@ -6479,15 +6479,33 @@ def segment_ml_pods_for_maturity(
 # PAGE 4 — COMBINED RESULTS
 # ============================================================
 
+print(
+    f"COCOATRACK_DIAG: STAGE5 START - PODS={len(selected_regions)} "
+    f"IMAGE={analysis_rgb.shape}",
+    flush=True,
+)
+
 stage5 = segment_ml_pods_for_maturity(
     analysis_rgb,
     selected_regions,
 )
 
+print(
+    f"COCOATRACK_DIAG: STAGE5 DONE - SEGMENTED={len(stage5['pods'])}",
+    flush=True,
+)
+
+print("COCOATRACK_DIAG: STAGE6 START", flush=True)
+
 stage6 = extract_features(
     analysis_rgb,
     stage5["label_image"],
     stage5["pods"],
+)
+
+print(
+    f"COCOATRACK_DIAG: STAGE6 DONE - ROWS={len(stage6)}",
+    flush=True,
 )
 
 if stage6.empty:
@@ -6509,6 +6527,9 @@ final_colour_masks = prepare_colour_masks(
     full_analysis_mask,
 )
 
+print("COCOATRACK_DIAG: COLOUR MASKS DONE", flush=True)
+print("COCOATRACK_DIAG: STAGE7 START", flush=True)
+
 stage7 = classify_by_mask_overlap(
     features_df=stage6,
     label_image=stage5["label_image"],
@@ -6516,9 +6537,21 @@ stage7 = classify_by_mask_overlap(
     red_brown_mask=final_colour_masks["red_brown_mask"],
 )
 
+print(
+    f"COCOATRACK_DIAG: STAGE7 DONE - ROWS={len(stage7)}",
+    flush=True,
+)
+
+print("COCOATRACK_DIAG: STAGE8 START", flush=True)
+
 stage8 = classify_maturity_from_hsv(
     stage7,
     uncertainty_threshold=0.46,
+)
+
+print(
+    f"COCOATRACK_DIAG: STAGE8 DONE - ROWS={len(stage8)}",
+    flush=True,
 )
 
 # ============================================================
