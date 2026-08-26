@@ -5621,58 +5621,64 @@ vertical_crop = st.session_state.get(
 # Image preview on LEFT, controls on RIGHT
 # ============================================================
 
+_run_detection_now = False
+
 if journey_step == 1:
     preview_column, control_column = st.columns(
         [1.15, 1.0],
         gap="large",
     )
 
-    # --------------------------------------------------------
-    # RIGHT SIDE — FULL IMAGE / CROP CONTROLS
-    # --------------------------------------------------------
     with control_column:
         st.markdown("### Detection Area")
 
-        crop_mode = st.radio(
-            "Choose the area used for ML detection",
-            [
-                "Full image",
-                "Crop / focus area",
-            ],
-            horizontal=False,
-            key="ml_detection_area_mode",
-        )
-
-        if crop_mode == "Crop / focus area":
-            st.markdown("#### Focus Area")
-
-            horizontal_crop = st.slider(
-                "Horizontal area (%)",
-                min_value=0,
-                max_value=100,
-                value=tuple(horizontal_crop),
-                key="ml_crop_horizontal",
+        with st.form(
+            "ml_detection_area_form",
+            clear_on_submit=False,
+        ):
+            crop_mode = st.radio(
+                "Choose the area used for ML detection",
+                [
+                    "Full image",
+                    "Crop / focus area",
+                ],
+                horizontal=False,
+                key="ml_detection_area_mode",
             )
 
-            vertical_crop = st.slider(
-                "Vertical area (%)",
-                min_value=0,
-                max_value=100,
-                value=tuple(vertical_crop),
-                key="ml_crop_vertical",
+            if crop_mode == "Crop / focus area":
+                st.markdown("#### Focus Area")
+
+                horizontal_crop = st.slider(
+                    "Horizontal area (%)",
+                    min_value=0,
+                    max_value=100,
+                    value=tuple(horizontal_crop),
+                    key="ml_crop_horizontal",
+                )
+
+                vertical_crop = st.slider(
+                    "Vertical area (%)",
+                    min_value=0,
+                    max_value=100,
+                    value=tuple(vertical_crop),
+                    key="ml_crop_vertical",
+                )
+
+                st.caption(
+                    "Adjust the sliders, then apply the area "
+                    "when you are ready to run detection."
+                )
+            else:
+                st.caption(
+                    "The full image will be used for ML pod detection."
+                )
+
+            _run_detection_now = st.form_submit_button(
+                "Apply Area & Run Detection",
+                type="primary",
+                width="stretch",
             )
-
-            st.caption(
-                "Adjust the sliders to limit where the ML "
-                "detector searches for cocoa pods."
-            )
-
-        else:
-            st.caption(
-                "The full image will be used for ML pod detection."
-            )
-
-
 # Re-read widget values after Streamlit updates.
 crop_mode = st.session_state.get(
     "ml_detection_area_mode",
@@ -5759,6 +5765,11 @@ if journey_step == 1:
 # Limit working resolution for cloud deployment.
 # The Edge Impulse detector operates at 320x320 internally, while
 # full-resolution OpenCV masks can consume substantial memory.
+# Do not run detection while crop controls are being adjusted.
+if journey_step == 1 and not _run_detection_now:
+    st.stop()
+
+
 _MAX_ANALYSIS_DIM = 2048
 
 _analysis_h, _analysis_w = analysis_rgb.shape[:2]
