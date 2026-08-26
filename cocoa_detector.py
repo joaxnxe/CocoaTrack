@@ -483,18 +483,6 @@ def detect_pods_with_edge_impulse(
             )
         )
 
-        region_mask = np.zeros_like(
-            accepted_mask
-        )
-
-        cv2.drawContours(
-            region_mask,
-            [contour],
-            -1,
-            255,
-            -1,
-        )
-
         cv2.drawContours(
             accepted_mask,
             [contour],
@@ -563,7 +551,6 @@ def detect_pods_with_edge_impulse(
         accepted_regions.append(
             {
                 "contour": contour,
-                "mask": region_mask,
                 "bbox": (
                     x,
                     y,
