@@ -5756,6 +5756,45 @@ if journey_step == 1:
         )
 
 
+# Limit working resolution for cloud deployment.
+# The Edge Impulse detector operates at 320x320 internally, while
+# full-resolution OpenCV masks can consume substantial memory.
+_MAX_ANALYSIS_DIM = 2048
+
+_analysis_h, _analysis_w = analysis_rgb.shape[:2]
+_analysis_longest = max(_analysis_h, _analysis_w)
+
+if _analysis_longest > _MAX_ANALYSIS_DIM:
+    _analysis_scale = _MAX_ANALYSIS_DIM / float(_analysis_longest)
+
+    _analysis_new_w = max(
+        1,
+        int(round(_analysis_w * _analysis_scale)),
+    )
+    _analysis_new_h = max(
+        1,
+        int(round(_analysis_h * _analysis_scale)),
+    )
+
+    print(
+        f"COCOATRACK_DIAG: RESIZING ANALYSIS "
+        f"{_analysis_w}x{_analysis_h} -> "
+        f"{_analysis_new_w}x{_analysis_new_h}",
+        flush=True,
+    )
+
+    analysis_rgb = cv2.resize(
+        analysis_rgb,
+        (_analysis_new_w, _analysis_new_h),
+        interpolation=cv2.INTER_AREA,
+    )
+else:
+    print(
+        f"COCOATRACK_DIAG: ANALYSIS SIZE OK "
+        f"{_analysis_w}x{_analysis_h}",
+        flush=True,
+    )
+
 # Cache ML detection for the exact image/crop so ordinary
 # Streamlit reruns do not repeatedly relaunch Edge Impulse.
 import hashlib
