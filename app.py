@@ -5848,142 +5848,132 @@ if (
         )
 
         st.markdown(
-            """
-            <style>
-            @keyframes cocoaPulse {
-                0%, 100% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-                50% {
-                    transform: scale(1.35);
-                    opacity: 0.55;
-                }
-            }
+            """<style>
+@keyframes cocoaPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 
-            @keyframes cocoaLoad {
-                0% {
-                    transform: translateX(-120%);
-                }
-                100% {
-                    transform: translateX(320%);
-                }
-            }
+    50% {
+        transform: scale(1.35);
+        opacity: 0.55;
+    }
+}
 
-            .cocoa-busy-card {
-                padding: 1.45rem 1.55rem;
-                margin: 1rem 0;
-                border-radius: 22px;
-                border: 1px solid rgba(232, 183, 83, 0.28);
-                background:
-                    radial-gradient(
-                        circle at 90% 0%,
-                        rgba(232, 183, 83, 0.18),
-                        transparent 38%
-                    ),
-                    linear-gradient(
-                        145deg,
-                        #211c17,
-                        #151311
-                    );
-                box-shadow:
-                    0 18px 45px rgba(0, 0, 0, 0.25),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            }
+@keyframes cocoaLoad {
+    0% {
+        transform: translateX(-120%);
+    }
 
-            .cocoa-busy-header {
-                display: flex;
-                align-items: center;
-                gap: 0.8rem;
-            }
+    100% {
+        transform: translateX(320%);
+    }
+}
 
-            .cocoa-busy-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: #efbc58;
-                box-shadow:
-                    0 0 0 6px rgba(239, 188, 88, 0.10),
-                    0 0 18px rgba(239, 188, 88, 0.75);
-                animation: cocoaPulse 1.25s ease-in-out infinite;
-            }
+.cocoa-busy-card {
+    padding: 1.35rem 1.4rem;
+    margin: 1rem 0;
+    border-radius: 20px;
+    border: 1px solid rgba(232, 183, 83, 0.25);
+    background: linear-gradient(
+        145deg,
+        #5f3927,
+        #3f281d
+    );
+    box-shadow: 0 14px 34px rgba(48, 30, 20, 0.16);
+    color: #fffaf4;
+}
 
-            .cocoa-busy-title {
-                color: #fff8ea;
-                font-size: 1.12rem;
-                font-weight: 750;
-            }
+.cocoa-busy-header {
+    display: flex;
+    align-items: center;
+    gap: 0.72rem;
+}
 
-            .cocoa-busy-message {
-                margin-top: 0.65rem;
-                margin-left: 1.8rem;
-                color: rgba(255, 248, 234, 0.72);
-                line-height: 1.55;
-                font-size: 0.93rem;
-            }
+.cocoa-busy-dot {
+    width: 11px;
+    height: 11px;
+    flex: 0 0 11px;
+    border-radius: 50%;
+    background: #efbc58;
+    box-shadow:
+        0 0 0 5px rgba(239, 188, 88, 0.10),
+        0 0 15px rgba(239, 188, 88, 0.58);
+    animation: cocoaPulse 1.25s ease-in-out infinite;
+}
 
-            .cocoa-busy-track {
-                position: relative;
-                height: 4px;
-                margin-top: 1rem;
-                overflow: hidden;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.08);
-            }
+.cocoa-busy-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+}
 
-            .cocoa-busy-bar {
-                position: absolute;
-                width: 38%;
-                height: 100%;
-                border-radius: 999px;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    #efbc58,
-                    #ffe2a2,
-                    transparent
-                );
-                animation: cocoaLoad 1.5s ease-in-out infinite;
-            }
+.cocoa-busy-message {
+    margin-top: 0.62rem;
+    margin-left: 1.7rem;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    opacity: 0.82;
+}
 
-            .cocoa-busy-status {
-                display: inline-block;
-                margin-top: 0.9rem;
-                margin-left: 1.8rem;
-                padding: 0.3rem 0.7rem;
-                border-radius: 999px;
-                background: rgba(239, 188, 88, 0.09);
-                border: 1px solid rgba(239, 188, 88, 0.20);
-                color: #f3ca78;
-                font-size: 0.72rem;
-                font-weight: 700;
-                letter-spacing: 0.07em;
-            }
-            </style>
+.cocoa-busy-track {
+    position: relative;
+    height: 4px;
+    margin-top: 0.95rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+}
 
-            <div class="cocoa-busy-card">
-                <div class="cocoa-busy-header">
-                    <div class="cocoa-busy-dot"></div>
-                    <div class="cocoa-busy-title">
-                        Detection in progress
-                    </div>
-                </div>
+.cocoa-busy-bar {
+    position: absolute;
+    width: 38%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #efbc58,
+        #ffe2a2,
+        transparent
+    );
+    animation: cocoaLoad 1.5s ease-in-out infinite;
+}
 
-                <div class="cocoa-busy-message">
-                    Execution is happening.
-                    Please wait for the current detection to finish
-                    before running another one.
-                </div>
+.cocoa-busy-status {
+    display: inline-block;
+    margin-top: 0.8rem;
+    margin-left: 1.7rem;
+    padding: 0.28rem 0.62rem;
+    border-radius: 999px;
+    background: rgba(239, 188, 88, 0.10);
+    border: 1px solid rgba(239, 188, 88, 0.18);
+    color: #f5cf84;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+}
+</style>
 
-                <div class="cocoa-busy-track">
-                    <div class="cocoa-busy-bar"></div>
-                </div>
+<div class="cocoa-busy-card">
+<div class="cocoa-busy-header">
+<div class="cocoa-busy-dot"></div>
+<div class="cocoa-busy-title">Detection in progress</div>
+</div>
 
-                <div class="cocoa-busy-status">
-                    COCOATRACK · PROCESSING
-                </div>
-            </div>
-            """,
+<div class="cocoa-busy-message">
+CocoaTrack is currently processing an image.
+Please wait for the current detection to finish before starting another.
+</div>
+
+<div class="cocoa-busy-track">
+<div class="cocoa-busy-bar"></div>
+</div>
+
+<div class="cocoa-busy-status">
+COCOATRACK · PROCESSING
+</div>
+</div>""",
             unsafe_allow_html=True,
         )
 
@@ -6992,12 +6982,7 @@ with summary_metric_4:
         maturity_majority,
     )
 
-result_tabs = st.tabs(
-    [
-        "Overview",
-        "Maturity",
-    ]
-)
+result_tabs = st.tabs(['Overview', 'Maturity', 'Validation'])
 
 with result_tabs[0]:
 
@@ -7155,6 +7140,10 @@ with result_tabs[0]:
             "Maturity is an experimental colour-based estimate."
         )
 
+
+
+
+
 with result_tabs[1]:
     st.markdown("#### Maturity Estimation")
 
@@ -7241,6 +7230,87 @@ with result_restart_column:
 
         reset_classification()
         st.rerun()
+
+
+with result_tabs[2]:
+    st.markdown("### Prototype Validation")
+
+    st.caption(
+        "Final held-out evaluation of CocoaTrack's cocoa pod "
+        "counting performance."
+    )
+
+    val_left, val_right = st.columns(2)
+
+    with val_left:
+        st.metric(
+            "Held-Out Images",
+            "9",
+        )
+
+        st.metric(
+            "CocoaTrack Detections",
+            "72",
+        )
+
+    with val_right:
+        st.metric(
+            "Ground-Truth Pods",
+            "117",
+        )
+
+        st.metric(
+            "Mean Absolute Error",
+            "5.00 pods/image",
+        )
+
+    st.info(
+        "Across nine held-out field images, CocoaTrack detected "
+        "72 of 117 manually identified cocoa pods. The mean "
+        "absolute counting error was 5.00 pods per image. "
+        "The prototype consistently underestimated pod count, "
+        "with larger differences observed in more occluded scenes."
+    )
+
+    st.markdown("#### Held-Out Image Results")
+
+    validation_df = pd.DataFrame(
+        [
+            ["T01_AngleB", 11, 9, -2],
+            ["T01_AngleC", 10, 5, -5],
+            ["T12_AngleB_L0", 11, 6, -5],
+            ["T14_AngleA", 16, 11, -5],
+            ["T14_AngleB", 17, 10, -7],
+            ["T14_AngleC", 23, 13, -10],
+            ["T15_AngleA", 10, 5, -5],
+            ["T15_AngleB", 9, 8, -1],
+            ["T15_AngleC", 10, 5, -5],
+        ],
+        columns=[
+            "Image",
+            "Ground Truth",
+            "Detected",
+            "Error",
+        ],
+    )
+
+    st.dataframe(
+        validation_df,
+        hide_index=True,
+        width="stretch",
+    )
+
+    st.caption(
+        "Ground truth includes manually identified visible "
+        "and partially occluded cocoa pods."
+    )
+
+    st.caption(
+        "Maturity remains an experimental colour-based "
+        "prototype estimation and is not part of this "
+        "quantitative validation."
+    )
+
 
 st.markdown(
     """
