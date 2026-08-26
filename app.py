@@ -4498,7 +4498,6 @@ def set_journey_step(step_number: int) -> None:
             len(JOURNEY_STEPS) - 1,
         )
     )
-    st.rerun()
 
 
 def journey_navigation(
@@ -4517,23 +4516,25 @@ def journey_navigation(
 
     with navigation_left:
         if previous_step is not None:
-            if st.button(
+            st.button(
                 "← Back",
                 key=f"journey_back_{journey_step}",
                 use_container_width=True,
-            ):
-                set_journey_step(previous_step)
+                on_click=set_journey_step,
+                args=(previous_step,),
+            )
 
     with navigation_right:
         if next_step is not None:
-            if st.button(
+            st.button(
                 next_label,
                 key=f"journey_next_{journey_step}",
                 type="primary",
                 use_container_width=True,
                 disabled=next_disabled,
-            ):
-                set_journey_step(next_step)
+                on_click=set_journey_step,
+                args=(next_step,),
+            )
 
 
 # A clear, playful journey indicator.
@@ -5632,20 +5633,24 @@ if journey_step == 1:
     with control_column:
         st.markdown("### Detection Area")
 
+        # Keep this OUTSIDE the form so selecting Crop / focus area
+        # immediately reveals the crop sliders.
+        crop_mode = st.radio(
+            "Choose the area used for ML detection",
+            [
+                "Full image",
+                "Crop / focus area",
+            ],
+            horizontal=False,
+            key="ml_detection_area_mode",
+        )
+
+        # Keep the adjustable crop controls INSIDE the form.
+        # Moving these sliders therefore does not rerun detection.
         with st.form(
             "ml_detection_area_form",
             clear_on_submit=False,
         ):
-            crop_mode = st.radio(
-                "Choose the area used for ML detection",
-                [
-                    "Full image",
-                    "Crop / focus area",
-                ],
-                horizontal=False,
-                key="ml_detection_area_mode",
-            )
-
             if crop_mode == "Crop / focus area":
                 st.markdown("#### Focus Area")
 
@@ -5679,6 +5684,8 @@ if journey_step == 1:
                 type="primary",
                 width="stretch",
             )
+
+
 # Re-read widget values after Streamlit updates.
 crop_mode = st.session_state.get(
     "ml_detection_area_mode",
